@@ -1,3 +1,5 @@
+package ff.erppres.connexion;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -10,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
+import ff.erppres.main.guiTest;
 
 
 public class userActivate extends JPanel {
@@ -31,13 +35,14 @@ public class userActivate extends JPanel {
 
 
 	public userActivate(String userName) {
+		setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 
 		this.setBackground(Color.LIGHT_GRAY);
-		this.setBounds(45, 185, 1108, 445);
+		this.setBounds(448, 336, 1108, 445);
 		setNomUtilisateur(userName);
 		JButton btnValidater = new JButton("Valider");
 		btnValidater.setBounds(476, 343, 147, 34);
-		Image img = new ImageIcon(this.getClass().getResource("Ok.png")).getImage();
+		Image img = new ImageIcon("img/Ok.png").getImage();
 		this.setLayout(null);
 		this.add(btnValidater);
 		btnValidater.setIcon(new ImageIcon(img));
@@ -85,7 +90,7 @@ public class userActivate extends JPanel {
 			label = new JLabel("");
 			label.setBounds(36, 98, 139, 171);
 			this.add(label);
-			img = new ImageIcon(this.getClass().getResource("secrecy.png")).getImage();
+			img = new ImageIcon("img/secrecy.png").getImage();
 			label.setIcon(new ImageIcon(img));
 		btnValidater.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
