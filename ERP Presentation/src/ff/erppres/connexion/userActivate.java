@@ -55,6 +55,7 @@ public class userActivate extends JPanel {
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setLayout(null);
 			
+		
 			lblUtilisateur = new JLabel("Utilisateur: "+getNomUtilisateur());
 			lblUtilisateur.setFont(new Font("Arial", Font.BOLD, 14));
 			lblUtilisateur.setBounds(10, 13, 200, 50);

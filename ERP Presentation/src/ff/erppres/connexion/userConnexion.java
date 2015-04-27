@@ -30,6 +30,7 @@ public class userConnexion extends JPanel {
 	private JLabel lblInvalidUserName;
 
 
+	
 	/**
 	 * Create the panel.
 	 */

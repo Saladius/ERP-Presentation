@@ -42,6 +42,7 @@ public class guiTest {
 	 */
 	private void initialize() {
 		//frame = new JFrame();
+		
 		getFrame().getContentPane().setBackground(new Color(0, 102, 255));
 		getFrame().getContentPane().setForeground(new Color(30, 144, 255));
 		getFrame().setBackground(new Color(30, 144, 255));
