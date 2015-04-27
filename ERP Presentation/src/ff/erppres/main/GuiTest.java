@@ -2,16 +2,29 @@ package ff.erppres.main;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import ff.erppres.connexion.userConnexion;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import ff.erppres.connexion.UserConnexion;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 
 
-public class guiTest {
+public class GuiTest {
 
 	private final static JFrame frame = new JFrame();
+	private final static JMenuBar menuBar = new JMenuBar();
+	
+	
+	
+
+
 
 
 	/**
@@ -21,8 +34,8 @@ public class guiTest {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new guiTest();
-					guiTest.frame.setVisible(true);
+					new GuiTest();
+					GuiTest.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -33,7 +46,7 @@ public class guiTest {
 	/**
 	 * Create the application.
 	 */
-	public guiTest() {
+	public GuiTest() {
 		initialize();
 	}
 
@@ -50,11 +63,17 @@ public class guiTest {
 		getFrame().setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getFrame().getContentPane().setLayout(null);
-		new userConnexion();
+		getFrame().setJMenuBar(menuBar);
+		
+		new UserConnexion();
 
 	}
 
 	public static JFrame getFrame() {
 		return frame;
 	}
+	public static JMenuBar getMenubar() {
+		return menuBar;
+	}
+	
 }

@@ -13,10 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
-import ff.erppres.main.guiTest;
+import ff.erppres.main.GuiTest;
+import javax.swing.JPasswordField;
 
 
-public class userActivate extends JPanel {
+public class UserActivate extends JPanel {
 
 	/**
 	 * 
@@ -29,12 +30,12 @@ public class userActivate extends JPanel {
 	private JLabel lblUtilisateur;
 	private JLabel lblerreurmdp;
 	private JLabel label;
-	private JTextField newPWTF;
-	private JTextField validationPWTF;
 	private String nomUtilisateur;
+	private JPasswordField newPWTF;
+	private JPasswordField passwordField;
 
 
-	public userActivate(String userName) {
+	public UserActivate(String userName) {
 		setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 
 		this.setBackground(Color.LIGHT_GRAY);
@@ -61,16 +62,6 @@ public class userActivate extends JPanel {
 			lblUtilisateur.setBounds(10, 13, 200, 50);
 			panel.add(lblUtilisateur);
 			
-			newPWTF = new JTextField();
-			newPWTF.setColumns(10);
-			newPWTF.setBounds(541, 25, 202, 28);
-			panel.add(newPWTF);
-			
-			validationPWTF = new JTextField();
-			validationPWTF.setColumns(10);
-			validationPWTF.setBounds(541, 92, 202, 28);
-			panel.add(validationPWTF);
-			
 			JLabel lblNouveauMotDe = new JLabel("Nouveau Mot de Pass");
 			lblNouveauMotDe.setFont(new Font("Arial", Font.BOLD, 14));
 			lblNouveauMotDe.setBounds(302, 31, 164, 14);
@@ -80,6 +71,14 @@ public class userActivate extends JPanel {
 			lblConfirmationMotDe.setFont(new Font("Arial", Font.BOLD, 14));
 			lblConfirmationMotDe.setBounds(302, 98, 202, 14);
 			panel.add(lblConfirmationMotDe);
+			
+			newPWTF = new JPasswordField();
+			newPWTF.setBounds(541, 25, 200, 28);
+			panel.add(newPWTF);
+			
+			passwordField = new JPasswordField();
+			passwordField.setBounds(541, 92, 200, 28);
+			panel.add(passwordField);
 			
 			lblerreurmdp = new JLabel("erreur Mot de Pass");
 			lblerreurmdp.setBounds(486, 282, 311, 50);

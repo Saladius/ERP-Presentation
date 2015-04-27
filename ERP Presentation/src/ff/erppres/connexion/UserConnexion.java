@@ -9,36 +9,39 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
-import ff.erppres.main.guiTest;
+import ff.erppres.main.GuiTest;
+import ff.erppres.production.Production;
+import javax.swing.JPasswordField;
 
-public class userConnexion extends JPanel {
+public class UserConnexion extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField UserTF;
-	private JTextField MdpTF;
 	private JLabel lblUtilisateur;
 	private JLabel lblMdp;
 	private JLabel lblerreurmdp;
 	private JLabel lblCompteBloquer;
 	private JLabel label;
 	private JLabel lblInvalidUserName;
+	private JPasswordField MdpTF;
 
 
 	
 	/**
 	 * Create the panel.
 	 */
-	public userConnexion() {
+	public UserConnexion() {
 		this.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		this.setBackground(Color.LIGHT_GRAY);
 		this.setBounds(655, 336, 676, 445);
-		guiTest.getFrame().getContentPane().add(this);
+		GuiTest.getFrame().getContentPane().add(this);
 		JButton btnValidater = new JButton("Valider");
 		btnValidater.setBounds(264, 343, 147, 34);
 		Image img = new ImageIcon("img/Ok.png").getImage();
@@ -59,12 +62,6 @@ public class userConnexion extends JPanel {
 		panel.add(UserTF);
 		UserTF.setColumns(10);
 
-
-		MdpTF = new JTextField();
-		MdpTF.setBounds(162, 92, 202, 28);
-		panel.add(MdpTF);
-		MdpTF.setColumns(10);
-
 		lblUtilisateur = new JLabel("Utilisateur");
 		lblUtilisateur.setFont(new Font("Arial", Font.BOLD, 14));
 		lblUtilisateur.setBounds(10, 13, 200, 50);
@@ -74,6 +71,10 @@ public class userConnexion extends JPanel {
 		lblMdp.setFont(new Font("Arial", Font.BOLD, 14));
 		lblMdp.setBounds(10, 81, 200, 50);
 		panel.add(lblMdp);
+		
+		MdpTF = new JPasswordField();
+		MdpTF.setBounds(162, 92, 202, 28);
+		panel.add(MdpTF);
 
 		lblerreurmdp = new JLabel("erreur Mot de Pass; tentative restante :");
 		lblerreurmdp.setBounds(247, 282, 311, 50);
@@ -112,9 +113,10 @@ public class userConnexion extends JPanel {
 				
 				String utilisateur = UserTF.getText();
 				String mdp = MdpTF.getText();
-				boolean isFirstLogin = true;/*User.getIsFirstLogin()*/
+				boolean isFirstLogin = false;/*User.getIsFirstLogin()*/
 				int nbrEssai = 0; /*User.getNbrEssai()*/
 				boolean actif = true; // User.getActif();
+				int profil=3;// User.getProfil();
 				
 				JPanel activationPanel;
 			
@@ -125,7 +127,7 @@ public class userConnexion extends JPanel {
 					MdpTF.setText("");
 				}
 				else{ 
-					if(!mdp.equalsIgnoreCase("fahlalouk")){
+					if(!mdp.equalsIgnoreCase("1")){
 
 						if(!actif){
 							lblCompteBloquer.setVisible(true);
@@ -144,10 +146,10 @@ public class userConnexion extends JPanel {
 					}
 					else if(isFirstLogin){
 						actif=true;
-						activationPanel = new userActivate(utilisateur);	
-						guiTest.getFrame().getContentPane().removeAll();
-						guiTest.getFrame().getContentPane().add(activationPanel);
-						guiTest.getFrame().repaint();
+						activationPanel = new UserActivate(utilisateur);	
+						GuiTest.getFrame().getContentPane().removeAll();
+						GuiTest.getFrame().getContentPane().add(activationPanel);
+						GuiTest.getFrame().repaint();
 					}
 					else if(!actif){
 						lblCompteBloquer.setVisible(true);
@@ -158,6 +160,33 @@ public class userConnexion extends JPanel {
 						//User.setDateLastConnexion(getDate());
 						//User.getProfilId()
 						//switch case :activationPanel = new XXXXX(utilisateur);	
+						switch (profil){
+						case 1:
+							System.out.println("gerant");
+							break;
+							
+						case 2:
+							System.out.println("compta");
+							break;
+							
+						case 3:
+							
+							GuiTest.getFrame().getContentPane().removeAll();
+							activationPanel = new Production(utilisateur);	
+							GuiTest.getFrame().getContentPane().add(activationPanel);				
+							GuiTest.getFrame().repaint();
+							break;
+							
+						case 4:
+							System.out.println("Approvisionnement");
+							break;
+							
+						case 5:
+							System.out.println("Commercial");
+							break;
+						default:
+							JOptionPane.showMessageDialog(null, "Erreur: Profil non conforme, contactez le service informatique");
+						}
 						//guiTest.getFrame().getContentPane().removeAll();
 						//guiTest.getFrame().getContentPane().add(activationPanel);
 						//guiTest.getFrame().repaint();
