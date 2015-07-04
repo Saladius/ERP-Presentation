@@ -5,6 +5,10 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,10 +17,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 
+import ff.erppres.commercial.JPanelCommercial;
+import ff.erppres.commercial.commercial;
 import ff.erppres.main.GuiTest;
 import ff.erppres.production.Production;
+
 import javax.swing.JPasswordField;
+
+import com.mysql.jdbc.PreparedStatement;
 
 public class UserConnexion extends JPanel {
 	/**
@@ -31,8 +41,28 @@ public class UserConnexion extends JPanel {
 	private JLabel label;
 	private JLabel lblInvalidUserName;
 	private JPasswordField MdpTF;
+	
+	private static int profil;
 
-
+	private static Connection connection; 
+	/**
+	 * Connexion.
+	 * */
+	static{
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			connection = DriverManager.getConnection("jdbc:mysql://localhost/erp_presentation","root","");
+			System.out.println("Bien connecté");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+	 
+		
+		public static Connection getConnection(){
+			return connection;
+		}
 	
 	/**
 	 * Create the panel.
@@ -40,7 +70,7 @@ public class UserConnexion extends JPanel {
 	public UserConnexion() {
 		this.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		this.setBackground(Color.LIGHT_GRAY);
-		this.setBounds(655, 336, 676, 445);
+		this.setBounds(330, 226, 676, 445);
 		GuiTest.getFrame().getContentPane().add(this);
 		JButton btnValidater = new JButton("Valider");
 		btnValidater.setBounds(264, 343, 147, 34);
@@ -54,6 +84,7 @@ public class UserConnexion extends JPanel {
 		panel.setBounds(211, 98, 408, 171);
 		this.add(panel);
 		panel.setBackground(new Color(135, 206, 250));
+	
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setLayout(null);
 
@@ -106,54 +137,54 @@ public class UserConnexion extends JPanel {
 		btnValidater.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO FF Action qui a lieu lors de la validation
-
-				lblCompteBloquer.setVisible(false);
-				lblerreurmdp.setVisible(false);
-				lblInvalidUserName.setVisible(false);
-				
 				String utilisateur = UserTF.getText();
 				String mdp = MdpTF.getText();
 				boolean isFirstLogin = false;/*User.getIsFirstLogin()*/
 				int nbrEssai = 0; /*User.getNbrEssai()*/
 				boolean actif = true; // User.getActif();
-				int profil=3;// User.getProfil();
+				boolean existe =false;
+			 	profil=0;// User.getProfil();
+				
+				try {
+					java.sql.PreparedStatement ps= connection.prepareStatement("SELECT * FROM user where USERNAME=?");
+					ps.setString(1,utilisateur);
+					//ps.setString(2,mdp);
+					ResultSet res=ps.executeQuery();
+					if(res.next()){
+						existe=true;
+						profil=res.getInt("PROFIL_ID");
+						actif =res.getBoolean("ACTIF");
+						isFirstLogin =res.getBoolean("IS_FIRST_LOGIN");
+						 
+					
+						System.out.println(profil);
+					}
+					 
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			 
+				lblCompteBloquer.setVisible(false);
+				lblerreurmdp.setVisible(false);
+				lblInvalidUserName.setVisible(false);
+				
+				
 				
 				JPanel activationPanel;
-			
 				
-				if(false/* utilisateur n'est pas dans la table des User*/)
+			
+				if(existe == false/* utilisateur n'est pas dans la table des User*/)
 				{
 					lblInvalidUserName.setVisible(true);
 					MdpTF.setText("");
 				}
-				else{ 
-					if(!mdp.equalsIgnoreCase("1")){
-
-						if(!actif){
-							lblCompteBloquer.setVisible(true);
-							MdpTF.setText("");
-						}
-						else if(nbrEssai>=3){
-							lblCompteBloquer.setVisible(true);
-							actif=false;
-
-						}
-						else{
-							lblerreurmdp.setText("erreur Mot de Pass; tentative restante :"+nbrEssai);
-							lblerreurmdp.setVisible(true);
-						}
-						MdpTF.setText("");
-					}
-					else if(isFirstLogin){
+				else if(isFirstLogin==false){
 						actif=true;
-						activationPanel = new UserActivate(utilisateur);	
+						activationPanel = new UserActivate(utilisateur);
 						GuiTest.getFrame().getContentPane().removeAll();
 						GuiTest.getFrame().getContentPane().add(activationPanel);
 						GuiTest.getFrame().repaint();
-					}
-					else if(!actif){
-						lblCompteBloquer.setVisible(true);
-						MdpTF.setText("");
 					}
 					else {
 						//User.setNbrEssai(3);
@@ -182,7 +213,13 @@ public class UserConnexion extends JPanel {
 							break;
 							
 						case 5:
-							System.out.println("Commercial");
+							//  System.out.println("Commercial"); 
+						       GuiTest.getFrame().getContentPane().removeAll();
+						       activationPanel = new commercial(utilisateur); 
+						     
+						       GuiTest.getFrame().getContentPane().add(activationPanel);
+						       GuiTest.getFrame().repaint();
+						       
 							break;
 						default:
 							JOptionPane.showMessageDialog(null, "Erreur: Profil non conforme, contactez le service informatique");
@@ -193,8 +230,100 @@ public class UserConnexion extends JPanel {
 					}
 					
 				}
-			}
+
+/*
+				if(existe == false utilisateur n'est pas dans la table des User)
+				{
+					lblInvalidUserName.setVisible(true);
+					MdpTF.setText("");
+				}
+				else{ 
+					if(!mdp.equalsIgnoreCase("1")){
+
+ 						if(!actif){
+ 							lblCompteBloquer.setVisible(true);
+ 							MdpTF.setText("");
+  					}
+ 						else if(nbrEssai>=3){
+ 							lblCompteBloquer.setVisible(true);
+ 							actif=false;
+ 
+ 						}
+ 					 	else{
+ 							lblerreurmdp.setText("erreur Mot de Pass; tentative restante  :"+nbrEssai);
+ 							lblerreurmdp.setVisible(true);
+ 						} 
+ 						MdpTF.setText(""); 
+ 					}
+					else if(isFirstLogin==false){
+						actif=true;
+						activationPanel = new UserActivate(utilisateur);	
+						GuiTest.getFrame().getContentPane().removeAll();
+						GuiTest.getFrame().getContentPane().add(activationPanel);
+						GuiTest.getFrame().repaint();
+					}
+ 					else if(!actif){
+ 						lblCompteBloquer.setVisible(true);
+ 						MdpTF.setText("");
+ 					}
+					else {
+						//User.setNbrEssai(3);
+						//User.setDateLastConnexion(getDate());
+						//User.getProfilId()
+						//switch case :activationPanel = new XXXXX(utilisateur);	
+						switch (profil){
+						case 1:
+							System.out.println("gerant");
+							break;
+							
+						case 2:
+							System.out.println("compta");
+							break;
+							
+						case 3:
+							
+							GuiTest.getFrame().getContentPane().removeAll();
+							activationPanel = new Production(utilisateur);	
+							GuiTest.getFrame().getContentPane().add(activationPanel);				
+							GuiTest.getFrame().repaint();
+							break;
+							
+						case 4:
+							System.out.println("Approvisionnement");
+							break;
+							
+						case 5:
+							  System.out.println("Commercial"); 
+						       GuiTest.getFrame().getContentPane().removeAll();
+						       activationPanel = new commercial(utilisateur); 
+						       GuiTest.getFrame().getContentPane().add(activationPanel);    
+						       GuiTest.getFrame().repaint();
+						       activationPanel = new commercial(utilisateur); 
+							break;
+						default:
+							JOptionPane.showMessageDialog(null, "Erreur: Profil non conforme, contactez le service informatique");
+						}
+						//guiTest.getFrame().getContentPane().removeAll();
+						//guiTest.getFrame().getContentPane().add(activationPanel);
+						//guiTest.getFrame().repaint();
+					}
+					
+				} 
+				
+				}*/
+				
+				
+				
+				
+			
 
 		});
+	
+
+	
 	}
+	
+	  public static int getIdprofil(){
+		  return profil;
+	  }
 }
