@@ -157,7 +157,7 @@ public class UserConnexion extends JPanel {
 						isFirstLogin =res.getBoolean("IS_FIRST_LOGIN");
 						 
 					
-						System.out.println(profil);
+						//System.out.println(profil);
 					}
 					 
 				} catch (SQLException e1) {
