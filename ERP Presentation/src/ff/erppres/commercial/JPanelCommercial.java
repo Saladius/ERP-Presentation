@@ -49,7 +49,19 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
 import javax.swing.JSpinner;
+
 import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
+
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.OutputStreamWriter;
+import javax.swing.JTable;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
 
 public class JPanelCommercial extends JPanel {
 
@@ -62,6 +74,13 @@ public class JPanelCommercial extends JPanel {
 	private JTextField tktTele;
 	private JTextField TxtEmailCleintview;
 	private JTextField txtTeleClientView;
+	static int ID_Client;
+	static int ID_Produit;
+	private JTable table;
+	private JTable table_1;
+	private JTable table_2;
+	private JTable table_3;
+	private JTable table_4;
 	public JPanelCommercial() {
 		setLayout(new BorderLayout(0, 0));
 		
@@ -78,10 +97,63 @@ public class JPanelCommercial extends JPanel {
 	
 		
 	
+
+		final JComboBox comboBoxNamClientView = new JComboBox();
+		final JComboBox comboBoxCategoriesProduit = new JComboBox();
+		final JComboBox comboBoxProduit = new JComboBox();
 		
+	
+	
 		
 		
 		JPanel panel = new JPanel();
+		panel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+
+				
+			 
+				
+				commercial com=new commercial();
+				comboBoxNamClientView.removeAllItems();
+				comboBoxCategoriesProduit.removeAllItems();
+				
+				ArrayList<Client> clientList=com.GetAllNmeClient();
+				for(Client c:clientList){
+					comboBoxNamClientView.addItem(c.getClient_NAME());
+				}
+				
+				Categorie Cat=new Categorie();
+				ArrayList<Categorie> CategorieList=Cat.GetListeCategorie();
+				for(Categorie categorie:CategorieList){
+					comboBoxCategoriesProduit.addItem(categorie.getCATEGORIE_NAME());
+				} 
+				
+				
+			}
+		});
+		
+		comboBoxCategoriesProduit.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				
+				if (e.getStateChange() == ItemEvent.DESELECTED)
+				    return;
+				
+				
+					Produit pro=new Produit();
+					comboBoxProduit.removeAllItems();
+					ArrayList<Produit> ProduitListe=pro.GetListeProduitsByCategorie(comboBoxCategoriesProduit.getSelectedItem().toString());
+					for(Produit pr:ProduitListe){
+						comboBoxProduit.addItem(pr.getNom_Produit());
+						
+					
+					} 
+				 
+				 
+			}
+		});
+		
+		
 		panel.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tabbedPane.addTab("Rentr\u00E9e de nouvelles commandes", null, panel, null);
 		panel.setLayout(null);
@@ -99,7 +171,7 @@ public class JPanelCommercial extends JPanel {
 		
 		JDesktopPane desktopPane_1 = new JDesktopPane();
 		desktopPane_1.setBackground(SystemColor.controlHighlight);
-		desktopPane_1.setBounds(460, 145, 489, 357);
+		desktopPane_1.setBounds(460, 145, 489, 283);
 		panel.add(desktopPane_1);
 		
 		JLabel lblCatgoriesProduit = new JLabel("Cat\u00E9gories produit :");
@@ -107,44 +179,45 @@ public class JPanelCommercial extends JPanel {
 		lblCatgoriesProduit.setBounds(10, 40, 156, 20);
 		desktopPane_1.add(lblCatgoriesProduit);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(172, 40, 221, 20);
-		desktopPane_1.add(comboBox);
+		
+		 
+		comboBoxCategoriesProduit.setBounds(172, 40, 252, 20);
+		desktopPane_1.add(comboBoxCategoriesProduit);
 		
 		JLabel lblProduitsRequis = new JLabel("Produits requis :");
 		lblProduitsRequis.setFont(new Font("Gotham Light", Font.PLAIN, 16));
 		lblProduitsRequis.setBounds(36, 76, 156, 20);
 		desktopPane_1.add(lblProduitsRequis);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(172, 77, 221, 20);
-		desktopPane_1.add(comboBox_1);
+	
+		comboBoxProduit.setBounds(172, 77, 252, 20);
+		desktopPane_1.add(comboBoxProduit);
 		
 		JLabel lblQuantitProduit = new JLabel("Quantit\u00E9 produit :");
 		lblQuantitProduit.setFont(new Font("Gotham Light", Font.PLAIN, 16));
 		lblQuantitProduit.setBounds(24, 115, 156, 20);
 		desktopPane_1.add(lblQuantitProduit);
-		JSpinner spinner = new JSpinner(model);
-		spinner.setBounds(172, 116, 94, 20);
-		desktopPane_1.add(spinner);
+		final JSpinner spinnerQuantite = new JSpinner(model);
+		spinnerQuantite.setBounds(172, 116, 94, 20);
+		desktopPane_1.add(spinnerQuantite);
 		
-		JCalendar calendar = new JCalendar();
-		calendar.setBounds(40, 180, 198, 153);
-		desktopPane_1.add(calendar);
-		
-		JLabel lblDateDbut = new JLabel("Date d\u00E9but ");
+		JLabel lblDateDbut = new JLabel("Date d\u00E9but :");
 		lblDateDbut.setFont(new Font("Gotham Light", Font.PLAIN, 16));
-		lblDateDbut.setBounds(40, 158, 156, 20);
+		lblDateDbut.setBounds(65, 158, 156, 20);
 		desktopPane_1.add(lblDateDbut);
 		
-		JCalendar calendar_1 = new JCalendar();
-		calendar_1.setBounds(261, 180, 198, 153);
-		desktopPane_1.add(calendar_1);
-		
-		JLabel lblDateFin = new JLabel("Date fin");
+		JLabel lblDateFin = new JLabel("Date fin :");
 		lblDateFin.setFont(new Font("Gotham Light", Font.PLAIN, 16));
-		lblDateFin.setBounds(260, 158, 156, 20);
+		lblDateFin.setBounds(92, 189, 156, 20);
 		desktopPane_1.add(lblDateFin);
+		
+		final JDateChooser dateChooserDateDbut = new JDateChooser();
+		dateChooserDateDbut.setBounds(172, 158, 145, 20);
+		desktopPane_1.add(dateChooserDateDbut);
+		
+		final JDateChooser dateChooserDateFin = new JDateChooser();
+		dateChooserDateFin.setBounds(172, 189, 145, 20);
+		desktopPane_1.add(dateChooserDateFin);
 		
 		JLabel label_2 = new JLabel(" l'information de Client");
 		label_2.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -158,7 +231,7 @@ public class JPanelCommercial extends JPanel {
 		
 		JDesktopPane desktopPane = new JDesktopPane();
 		desktopPane.setBackground(SystemColor.controlHighlight);
-		desktopPane.setBounds(15, 143, 435, 359);
+		desktopPane.setBounds(15, 143, 435, 285);
 		panel.add(desktopPane);
 		
 		JLabel label = new JLabel("Nom du client :");
@@ -200,57 +273,181 @@ public class JPanelCommercial extends JPanel {
 		
 		
 		
-		final JComboBox comboBoxNamClientView = new JComboBox();
 		
 		
-		commercial com=new commercial();
-		ArrayList<Client> clientList=com.GetAllNmeClient();
-		for(Client c:clientList){
-			comboBoxNamClientView.addItem(c.getClient_NAME());
-		}
+		
 		comboBoxNamClientView.setBounds(136, 40, 221, 20);
 		
 	 
 		desktopPane.add(comboBoxNamClientView);
 		
 		JButton btnAjouterNouvelleCommande = new JButton("Ajouter nouvelle Commande");
-		btnAjouterNouvelleCommande.setBounds(353, 519, 198, 33);
+		btnAjouterNouvelleCommande.setBounds(374, 480, 198, 33);
 		panel.add(btnAjouterNouvelleCommande);
 		btnAjouterNouvelleCommande.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+			 
+				String Message="";
+				DateFormat dateFormat    = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+				DateFormat dateFormat_ch = new SimpleDateFormat("yyy/MM/dd");
+				Date date = new Date();
+				commercial com=new commercial();
+				Produit pro=new Produit();
+				
+//				comboBoxCategoriesProduit.getSelectedItem().toString().trim().equals("") && comboBoxProduit.getSelectedItem() == null && 
+
+				if((Integer)spinnerQuantite.getValue() <0 || dateChooserDateFin.getDate() == null || dateChooserDateDbut.getDate() == null){
+					
+					Message +=" Vous n'avez pas rempli toutes les zones ";
+				}
+				else{
+				Message += com.AddCommande(ID_Produit, (int)spinnerQuantite.getValue(),ID_Client, UserConnexion.getIduser(), dateFormat_ch.format(dateChooserDateDbut.getDate()), dateFormat_ch.format(dateChooserDateFin.getDate()), dateFormat.format(date), "en cours");
+				//System.out.println(ID_Produit +" "+ (int)spinnerQuantite.getValue() +" "+ ID_Client +" "+ UserConnexion.getIdprofil() +" "+ String.format("%1$td-%1$tm-%1$tY",dateChooserDateDbut.getDate()) +" "+ String.format("%1$td-%1$tm-%1$tY",dateChooserDateFin.getDate()) +" "+ dateFormat.format(date) +" "+ "en cours");
+				//System.out.println(dateFormat.format(dateChooserDateDbut.getDate()));
+				}
+				
+				
+				JOptionPane.showMessageDialog(new JFrame(), Message);
 			}
 		});
 		btnAjouterNouvelleCommande.setBackground(SystemColor.controlHighlight);
 		
 		comboBoxNamClientView.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange() == ItemEvent.DESELECTED)
+					return;
 				commercial comm=new commercial();
 				ArrayList<Client> clientList=comm.GetClient(comboBoxNamClientView.getSelectedItem().toString());
 				for(Client c:clientList){
 					TxtEmailCleintview.setText(c.getClient_MAIL());
 					txtTeleClientView.setText(c.getTele());
 					tktAdressView.setText(c.getAdresse_client());
+					ID_Client=c.getID_Client();
 					 
-				}
+				} 
 			}
 		});
 		
+		comboBoxProduit.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange() ==ItemEvent.DESELECTED)
+					return;
+				Produit pro=new Produit();
+				ID_Produit =pro.GetID_ProduitBayProduit_Name(comboBoxProduit.getSelectedItem().toString());
+				//System.out.println(ID_Produit);
+			}
+		});
+		
+	 
 		
 		JPanel panel_1 = new JPanel();
+		table_1 = new JTable();
+		panel_1.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				DefaultTableModel model=new DefaultTableModel();
+				model.setColumnIdentifiers(new String[]{"Nom de Client","Nom de produit","Quantité produit","L’état de Commandes","Date de Début","Date Fin","Date Lancement"});
+				Commande com=new Commande();
+				ArrayList<Commande> ListeCommandes=com.GetListeCommandesEnattentes();
+				for(Commande c:ListeCommandes){
+					model.addRow(new String[]{c.getClient_Name(),c.getNom_Produit(),Integer.toString(c.getProduit_quantite()),c.getEtat_Commandes(),c.getDate_debut().toString(),c.getDate_Fin().toString(),c.getDate_Lancement().toString()});
+				}
+				table_1.setModel(model);
+			}
+		});
 		tabbedPane.addTab("Des Commandes ( En attentes )", null, panel_1, null);
 		panel_1.setLayout(null);
 		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(50, 90, 883, 448);
+		panel_1.add(scrollPane_1);
 		
+		
+		scrollPane_1.setViewportView(table_1);
+		
+		table = new JTable();
 		JPanel panel_2 = new JPanel(); 
+		panel_2.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				
+				DefaultTableModel model=new DefaultTableModel();
+				model.setColumnIdentifiers(new String[]{"Nom de Client","Nom de produit","Quantité produit","L’état de Commandes","Date de Début","Date Fin","Date Lancement"});
+				Commande com=new Commande();
+				ArrayList<Commande> ListeCommandes=com.GetListeCommandesEncours();
+				for(Commande c:ListeCommandes){
+					model.addRow(new String[]{c.getClient_Name(),c.getNom_Produit(),Integer.toString(c.getProduit_quantite()),c.getEtat_Commandes(),c.getDate_debut().toString(),c.getDate_Fin().toString(),c.getDate_Lancement().toString()});
+				}
+				table.setModel(model);
+				
+				
+			}
+		});
 		tabbedPane.addTab("Des Commandes ( En cours )", null, panel_2, null);
+		panel_2.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(50, 90, 883, 448);
+		panel_2.add(scrollPane);
+		
+		
+		
+		scrollPane.setViewportView(table);
 		
 		
 		JPanel panel_3 = new JPanel(); 
+		table_2 = new JTable();
+		panel_3.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				
+				DefaultTableModel model=new DefaultTableModel();
+				model.setColumnIdentifiers(new String[]{"Nom de Client","Nom de produit","Quantité produit","L’état de Commandes","Date de Début","Date Fin","Date Lancement"});
+				Commande com=new Commande();
+				ArrayList<Commande> ListeCommandes=com.GetListeCommandesTermines();
+				for(Commande c:ListeCommandes){
+					model.addRow(new String[]{c.getClient_Name(),c.getNom_Produit(),Integer.toString(c.getProduit_quantite()),c.getEtat_Commandes(),c.getDate_debut().toString(),c.getDate_Fin().toString(),c.getDate_Lancement().toString()});
+				}
+				table_2.setModel(model);
+			}
+		});
 		tabbedPane.addTab("Des Commandes ( Termin\u00E9s  )", null, panel_3, null);
+		panel_3.setLayout(null);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(50, 90, 883, 448);
+		panel_3.add(scrollPane_2);
+		
+		
+		scrollPane_2.setViewportView(table_2);
 		
 		
 		JPanel panel_4 = new JPanel(); 
+		table_3 = new JTable();
+		panel_4.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				
+				DefaultTableModel model=new DefaultTableModel();
+				model.setColumnIdentifiers(new String[]{"Nom de Client","Nom de produit","Quantité produit","L’état de Commandes","Date de Début","Date Fin","Date Lancement"});
+				Commande com=new Commande();
+				ArrayList<Commande> ListeCommandes=com.GetListeCommandesValider();
+				for(Commande c:ListeCommandes){
+					model.addRow(new String[]{c.getClient_Name(),c.getNom_Produit(),Integer.toString(c.getProduit_quantite()),c.getEtat_Commandes(),c.getDate_debut().toString(),c.getDate_Fin().toString(),c.getDate_Lancement().toString()});
+				}
+				table_3.setModel(model);
+			}
+		});
 		tabbedPane.addTab("Des Commandes  ( Valider )", null, panel_4, null);
+		panel_4.setLayout(null);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(50, 90, 883, 448);
+		panel_4.add(scrollPane_3);
+		
+		
+		scrollPane_3.setViewportView(table_3);
 		
 		
 		JPanel panel_5 = new JPanel(); 
@@ -259,6 +456,31 @@ public class JPanelCommercial extends JPanel {
 		JPanel panel_6 = new JPanel();
 		tabbedPane.addTab("Ajouter nouveaux Client", null, panel_6, null);
 		panel_6.setLayout(null);
+		
+		JPanel panel_7 =new JPanel();
+		table_4 = new JTable();
+		panel_7.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+				DefaultTableModel model=new DefaultTableModel();
+				model.setColumnIdentifiers(new String[]{"Nom de Client","Nom de produit","Quantité produit","Délai restant par jour"});
+				Commande com=new Commande();
+				ArrayList<Commande> ListeCommandes=com.GetListeDelaiproductionRestant();
+				for(Commande c:ListeCommandes){
+					model.addRow(new String[]{c.getClient_Name(),c.getNom_Produit(),Integer.toString(c.getProduit_quantite()),c.getDelaiproductionRestant().toString()});
+				}
+				table_4.setModel(model);
+			}
+		});
+		tabbedPane.addTab("Délai de production restant", null,panel_7,null);
+		panel_7.setLayout(null);
+		
+		JScrollPane scrollPane_4 = new JScrollPane();
+		scrollPane_4.setBounds(50, 90, 883, 448);
+		panel_7.add(scrollPane_4);
+		
+		table_4 = new JTable();
+		scrollPane_4.setViewportView(table_4);
 		
 		JLabel lblLinformationDeClient = new JLabel(" L'information de Client");
 		lblLinformationDeClient.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -313,20 +535,23 @@ public class JPanelCommercial extends JPanel {
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String Message;
+				String Message="";
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Date date = new Date();
 				commercial com=new commercial();
-				Message =com.AddClient(tktClient_NAME.getText(), tktClient_MAIL.getText(), tktAdresse_client.getText(), tktTele.getText(),dateFormat.format(date),UserConnexion.getIdprofil());
+				if(tktClient_NAME.getText().trim().equals("") && tktClient_MAIL.getText().trim().equals("") &&  tktAdresse_client.getText().trim().equals("")){
+					
+					Message +=" Vous n'avez pas rempli toutes les zones ";
+				}
+				else{
+				Message += com.AddClient(tktClient_NAME.getText(), tktClient_MAIL.getText(), tktAdresse_client.getText(), tktTele.getText(),dateFormat.format(date),UserConnexion.getIduser());
 				tktClient_NAME.setText("");
 				tktClient_MAIL.setText("");
 				tktAdresse_client.setText("");
 				tktTele.setText("");
+				}
+				
 				JOptionPane.showMessageDialog(new JFrame(), Message);
-				 
-			 
-				
-				
 				}
 		});
 		button_1.setBounds(168, 256, 198, 33);
@@ -341,7 +566,7 @@ public class JPanelCommercial extends JPanel {
 			}
 		});
 		button_3.setBackground(SystemColor.controlHighlight);
-		button_3.setBounds(26, 36, 188, 29);
+		button_3.setBounds(26, 36, 241, 29);
 		panel_6.add(button_3);
 		
 

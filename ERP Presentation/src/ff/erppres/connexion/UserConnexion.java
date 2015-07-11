@@ -43,6 +43,7 @@ public class UserConnexion extends JPanel {
 	private JPasswordField MdpTF;
 	
 	private static int profil;
+	private static int ID_USER;
 
 	private static Connection connection; 
 	/**
@@ -152,6 +153,7 @@ public class UserConnexion extends JPanel {
 					ResultSet res=ps.executeQuery();
 					if(res.next()){
 						existe=true;
+						ID_USER=res.getInt("ID_USER");
 						profil=res.getInt("PROFIL_ID");
 						actif =res.getBoolean("ACTIF");
 						isFirstLogin =res.getBoolean("IS_FIRST_LOGIN");
@@ -325,5 +327,8 @@ public class UserConnexion extends JPanel {
 	
 	  public static int getIdprofil(){
 		  return profil;
+	  }
+	  public static int getIduser(){
+		  return ID_USER;
 	  }
 }

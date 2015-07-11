@@ -5,6 +5,8 @@ import java.util.Date;
 public class Client {
  
 	private int ID_Client;
+	
+
 	private String Client_NAME;
 	private String Client_MAIL;
 	private String Adresse_client;
@@ -44,6 +46,9 @@ public class Client {
 	}
 	public int getID_Client() {
 		return ID_Client;
+	}
+	public void setID_Client(int iD_Client) {
+		ID_Client = iD_Client;
 	}
 	public int getID_Commerciale() {
 		return ID_Commerciale;

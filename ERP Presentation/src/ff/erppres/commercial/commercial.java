@@ -24,7 +24,7 @@ public class commercial extends JPanel{
 	
 	
 	private String nomUtilisateur;
-	private JMenu mnCommandesVisualisation, mntCommandes, mnPayementsDivers;
+	private JMenu mnCommandesVisualisation, mntCommandes, mnPayementsDivers,mnDelaiProductionRestant;
  
 	private JMenuItem mntmNouvellesCommandes;
 	private JMenuItem mntmAjouterClient;
@@ -33,6 +33,7 @@ public class commercial extends JPanel{
 	private JMenuItem mntCommandesTermines;
 	private JMenuItem mntCommandesValider;
 	private JMenuItem mntPayementsDivers;
+	private JMenuItem mntDelaiProductionRestant;
 	
 	
 	
@@ -166,7 +167,18 @@ public class commercial extends JPanel{
 		GuiTest.getMenubar().add(mnPayementsDivers);
 		
 	
-	 
+		mnDelaiProductionRestant =new JMenu("Délai de production restant");
+		mntDelaiProductionRestant =new JMenuItem("Délai de production restant",'D');
+		mntDelaiProductionRestant.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				activatjPanelComercial.SetActvePanel(7);
+				
+							
+				 
+			}
+		});
+		mnDelaiProductionRestant.add(mntDelaiProductionRestant);
+		GuiTest.getMenubar().add(mnDelaiProductionRestant);
 		 
 		  
 	 
@@ -181,7 +193,7 @@ public class commercial extends JPanel{
 	public String AddClient(String Client_NAME,String Client_MAIL,String Adresse_client,String Tele,String DATE_CREATION,int ID_Commerciale){
 		 
 		conn = UserConnexion.getConnection();
-		String Message;
+		String Message ="";
 		try {
 			stmt =conn.createStatement();
 			String sql = "INSERT INTO client(Client_NAME,Client_MAIL,Adresse_client,Tele,DATE_CREATION,ID_Commerciale) " +
@@ -198,16 +210,33 @@ public class commercial extends JPanel{
 		
 	}
 	
-	public String AddCo(String Client_NAME,String Client_MAIL,String Adresse_client,String Tele,String DATE_CREATION,int ID_Commerciale){
+ 
+ 
+	
+	public String AddCommande(int ID_Produit,int Produit_quantite,int ID_Client,int ID_User,String Date_début,String Date_Fin,String Date_Lancement,String etat_Commandes){
 		 
 		conn = UserConnexion.getConnection();
 		String Message;
+		String lastid_commande;
 		try {
 			stmt =conn.createStatement();
-			String sql = "INSERT INTO client(Client_NAME,Client_MAIL,Adresse_client,Tele,DATE_CREATION,ID_Commerciale) " +
-                    "VALUES ('"+Client_NAME+"', '"+Client_MAIL+"', '"+Adresse_client+"','"+Tele+"','"+DATE_CREATION+"',"+ID_Commerciale+")";
-			
+			String sql = "INSERT INTO commande (ID_Produit,Produit_quantite,ID_Client,ID_User)" +
+                    "VALUES ('"+ID_Produit+"','"+Produit_quantite+"','"+ID_Client+"','"+ID_User+"')";
+
 			stmt.executeUpdate(sql);
+			
+			
+		ResultSet rs = stmt.executeQuery("select last_insert_id() as last_id from commande");
+		rs.next();
+		lastid_commande = rs.getString("last_id");
+			
+		String sql2 = "INSERT INTO detaille_commandes (Date_début,Date_Fin,Date_Lancement,etat_Commandes,ID_Commande)" +
+                    "VALUES ('"+Date_début+"','"+Date_Fin+"','"+Date_Lancement+"','"+etat_Commandes+"','"+Integer.parseInt(lastid_commande)+"')";
+			
+		stmt.executeUpdate(sql2);
+			
+			
+			
 			Message="Message de succès ,Bien ajouter.";	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -251,7 +280,7 @@ public class commercial extends JPanel{
 		
 		try {
 			stmt =conn.createStatement();
-			String sql = "Select Client_MAIL,Adresse_client,Tele from client where Client_NAME like '"+Client_NAME+"'";
+			String sql = "Select ID_Client,Client_MAIL,Adresse_client,Tele from client where Client_NAME like '"+Client_NAME+"'";
 			
 			ResultSet srs =stmt.executeQuery(sql);
 			  while (srs.next()) {
@@ -259,6 +288,7 @@ public class commercial extends JPanel{
 	               c.setClient_MAIL(srs.getString("Client_MAIL"));
 	               c.setAdresse_client(srs.getString("Adresse_client"));
 	               c.setTele(srs.getString("Tele"));
+	               c.setID_Client(Integer.parseInt(srs.getString("ID_Client")));
 	               clientList.add(c);
 	               
 	          }
@@ -272,6 +302,10 @@ public class commercial extends JPanel{
 		return  clientList;
 		
 	}
+	
+	
+
+	
 	
 	public String getNomUtilisateur() {
 		return nomUtilisateur;
