@@ -213,15 +213,17 @@ public class commercial extends JPanel{
  
  
 	
-	public String AddCommande(int ID_Produit,int Produit_quantite,int ID_Client,int ID_User,String Date_début,String Date_Fin,String Date_Lancement,String etat_Commandes){
+	public String AddCommande(String Date_Lancement,int ID_Client,int ID_User,ArrayList<String[]> detaille_commandes,int Delai_Paiement,float Montant_Paiement,String Type_Paiement,ArrayList<String[]> Paiement){
 		 
 		conn = UserConnexion.getConnection();
 		String Message;
 		String lastid_commande;
+		String lastid_paiement;
+		 
 		try {
 			stmt =conn.createStatement();
-			String sql = "INSERT INTO commande (ID_Produit,Produit_quantite,ID_Client,ID_User)" +
-                    "VALUES ('"+ID_Produit+"','"+Produit_quantite+"','"+ID_Client+"','"+ID_User+"')";
+			String sql = "INSERT INTO commande (Date_Lancement,ID_Client,ID_User)" +
+                    "VALUES ('"+Date_Lancement+"','"+ID_Client+"','"+ID_User+"')";
 
 			stmt.executeUpdate(sql);
 			
@@ -230,12 +232,39 @@ public class commercial extends JPanel{
 		rs.next();
 		lastid_commande = rs.getString("last_id");
 			
-		String sql2 = "INSERT INTO detaille_commandes (Date_début,Date_Fin,Date_Lancement,etat_Commandes,ID_Commande)" +
-                    "VALUES ('"+Date_début+"','"+Date_Fin+"','"+Date_Lancement+"','"+etat_Commandes+"','"+Integer.parseInt(lastid_commande)+"')";
+ 	
+		
+		for(int i=0;i<detaille_commandes.size();i++)
+		{
+			String[] myString= new String[4];
+			myString=detaille_commandes.get(i); 
+		    String sql2 = "INSERT INTO detaille_commandes (Date_début,Date_Fin,etat_Commandes,Produit_quantite,ID_Produit,ID_Commande)" +
+	                    "VALUES ('"+myString[0]+"','"+myString[1]+"','en cours','"+myString[2]+"','"+myString[3]+"','"+Integer.parseInt(lastid_commande)+"')";
+				
+			stmt.executeUpdate(sql2);
+			 
+		}
+		
+		 
+	    String sql3 = "INSERT INTO paiement(ID_Commande,Delai_Paiement,Montant_Paiement,Type_Paiement,valider)" +
+                    "VALUES ('"+Integer.parseInt(lastid_commande)+"','"+Delai_Paiement+"','"+Montant_Paiement+"','"+Type_Paiement+"','Non')";
 			
-		stmt.executeUpdate(sql2);
-			
-			
+		stmt.executeUpdate(sql3);
+		
+		ResultSet rss = stmt.executeQuery("select last_insert_id() as last_id from paiement");
+		rss.next();
+		lastid_paiement = rss.getString("last_id");
+		
+		for(int i=0;i<Paiement.size();i++)
+		{
+			String[] myPaiement= new String[2];
+			myPaiement=Paiement.get(i); 		
+		    String sql4 = "INSERT INTO detaille_paiement (Date_Paiement,Montant_Paiement,ID_Paiement,Valider)" +
+	                    "VALUES ('"+myPaiement[0]+"','"+myPaiement[1]+"','"+Integer.parseInt(lastid_paiement)+"','Non')";
+				
+			stmt.executeUpdate(sql4);
+			 
+		}
 			
 			Message="Message de succès ,Bien ajouter.";	
 		} catch (SQLException e) {

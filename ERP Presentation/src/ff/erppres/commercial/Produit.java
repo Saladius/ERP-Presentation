@@ -10,15 +10,37 @@ public class Produit {
 
 	
 	private int ID_Produit; 
-	
-
-
 	private String Nom_Produit;
 	private String Desc_Produit; 
 	private String ID_Catégories;
+	private double UNIT_VALUE;
+	private int STOCK_MIN;
+	private int STOCK;
 	
 	java.sql.Statement stmt = null;
 	java.sql.Connection conn = null;
+	
+	
+	public double getUNIT_VALUE() {
+		return UNIT_VALUE;
+	}
+	public void setUNIT_VALUE(double uNIT_VALUE) {
+		UNIT_VALUE = uNIT_VALUE;
+	}
+	public int getSTOCK_MIN() {
+		return STOCK_MIN;
+	}
+	public void setSTOCK_MIN(int sTOCK_MIN) {
+		STOCK_MIN = sTOCK_MIN;
+	}
+	public int getSTOCK() {
+		return STOCK;
+	}
+	public void setSTOCK(int sTOCK) {
+		STOCK = sTOCK;
+	}
+
+	
 	
 	public String getNom_Produit() {
 		return Nom_Produit;
@@ -100,6 +122,30 @@ public class Produit {
 		}
 		
 		return  ID_Produit;
+	}
+	
+	public double GetUNIT_VALUE_ByProduit_Name(String Produit_Name){
+		conn = UserConnexion.getConnection();
+		double UNIT_VALUE = 0;
+		
+		try {
+			stmt =conn.createStatement();
+			String sql = "SELECT UNIT_VALUE FROM produit where Nom_Produit like '"+Produit_Name+"';";
+			
+			ResultSet srs =stmt.executeQuery(sql);
+			    srs.next();
+			    UNIT_VALUE =Double.parseDouble(srs.getString("UNIT_VALUE"));
+	             
+	               
+	          
+			 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		 
+		}
+		
+		return  UNIT_VALUE;
 	}
 	
 	
